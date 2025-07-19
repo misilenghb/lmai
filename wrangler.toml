@@ -1,0 +1,11 @@
+name = "luminos-crystal-calendar"
+compatibility_date = "2025-07-19"
+
+# Cloudflare Pages 静态资产配置
+[assets]
+directory = "./out"
+
+# 环境变量
+[env.production.vars]
+NODE_ENV = "production"
+NEXT_TELEMETRY_DISABLED = "1"
