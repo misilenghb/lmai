@@ -1,4 +1,4 @@
-'use server';
+// 移除 'use server' 以兼容静态导出
 import { z } from 'zod';
 
 // 输入参数定义

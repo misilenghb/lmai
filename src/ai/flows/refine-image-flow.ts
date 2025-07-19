@@ -1,4 +1,4 @@
-'use server';
+// 移除 'use server' 以兼容静态导出
 
 /**
  * @fileOverview An AI flow that refines an existing image based on a text prompt.

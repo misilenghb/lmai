@@ -1,4 +1,4 @@
-'use server';
+// 移除 'use server' 以兼容静态导出
 /**
  * @fileOverview A conversational AI agent for the creative workshop.
  * 支持多模型和Token切换，调用Pollinations文本API。

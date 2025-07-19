@@ -1,4 +1,4 @@
-'use server';
+// 移除 'use server' 以兼容静态导出
 
 /**
  * @fileOverview 设计建议AI流程，调用Pollinations API，支持多模型和Token切换。
