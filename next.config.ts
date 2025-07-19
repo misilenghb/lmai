@@ -14,9 +14,7 @@ const nextConfig: NextConfig = {
   // 配置服务器外部包和实验性功能
   serverExternalPackages: ['@genkit-ai/googleai', '@genkit-ai/next', 'sharp'],
   experimental: {
-    serverActions: {
-      bodySizeLimit: '2mb',
-    },
+    // serverActions 与静态导出不兼容，已移除
     optimizePackageImports: ['lucide-react'],
   },
   images: {
