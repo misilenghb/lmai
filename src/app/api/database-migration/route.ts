@@ -4,6 +4,10 @@ import DatabaseRelationshipManager from '@/lib/database-relationships';
 import { supabase } from '@/lib/supabase';
 import { fixProfilesRLS, ensureEnhancedAssessmentColumn } from '@/lib/database-fix';
 
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 export async function GET() {
   try {
     console.log('🔍 开始数据库综合诊断...');

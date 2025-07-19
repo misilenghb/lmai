@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseSetupExecutor } from '@/lib/execute-database-setup';
 
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 export async function POST(request: NextRequest) {
   try {
     console.log('🚀 开始执行数据库完整设置...');

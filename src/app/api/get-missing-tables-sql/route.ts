@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 export async function GET(request: NextRequest) {
   const missingTablesSql = `-- 水晶日历系统 - 缺失表格创建脚本
 -- 请将以下SQL语句复制到Supabase Dashboard的SQL编辑器中执行
