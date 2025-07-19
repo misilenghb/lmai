@@ -4,6 +4,10 @@ import { mlPredictionCache } from '../../../lib/ml-prediction-cache';
 import { dynamicPricingEngine } from '../../../lib/dynamic-pricing-engine';
 import { abTestingFramework } from '../../../lib/ab-testing-framework';
 
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 // 数据库性能指标
 async function getDatabaseMetrics(supabaseClient: any) {
   try {

@@ -3,6 +3,10 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { fixDesignWorksRLS, temporarilyDisableRLS, enableRLS } from '@/lib/database-fix';
 
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 export async function GET(request: NextRequest) {
   const cookieStore = await cookies();
   const supabase = createServerClient(
