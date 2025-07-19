@@ -1,4 +1,4 @@
-'use server';
+// 移除 'use server' 以兼容静态导出
 /**
  * @fileOverview An AI flow that generates daily personalized guidance for a user.
  * It takes a user's energy profile and a target date, then returns a daily crystal, a short meditation script,

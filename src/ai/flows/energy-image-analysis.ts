@@ -1,4 +1,4 @@
-'use server';
+// 移除 'use server' 以兼容静态导出
 /**
  * @fileOverview An AI agent that provides a holistic metaphysical reading based on an image and user-provided crystal types.
  *
