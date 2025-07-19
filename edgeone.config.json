@@ -1,12 +1,13 @@
 {
   "version": "1.0",
   "build": {
-    "command": "npm run build",
+    "command": "npm run build:edgeone",
     "outputDirectory": "out",
     "environment": {
       "NODE_ENV": "production",
       "NEXT_TELEMETRY_DISABLED": "1"
-    }
+    },
+    "cache": false
   },
   "routes": [
     {

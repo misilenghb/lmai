@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   distDir: 'out',
   trailingSlash: true,
 
+  // 优化构建以避免大文件
+  swcMinify: true,
+  compress: true,
+
   // 在构建时忽略 ESLint 错误
   eslint: {
     ignoreDuringBuilds: true,
@@ -63,8 +67,8 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key',
     POLLINATIONS_API_TOKEN: process.env.POLLINATIONS_API_TOKEN,
   },
-  // Webpack 配置优化
-  webpack: (config: any, { isServer }: { isServer: boolean }) => {
+  // Webpack 配置优化 - 减少文件大小
+  webpack: (config: any, { isServer, dev }: { isServer: boolean; dev: boolean }) => {
     // 外部化某些包以减少构建大小
     if (isServer) {
       config.externals = [...(config.externals || []), 'canvas', 'jsdom', 'sharp'];
@@ -77,6 +81,29 @@ const nextConfig: NextConfig = {
       net: false,
       tls: false,
     };
+
+    // 生产环境优化 - 减少缓存文件大小
+    if (!dev) {
+      // 禁用持久化缓存以避免大文件
+      config.cache = false;
+
+      // 优化分包策略
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          maxSize: 20000000, // 20MB
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+              maxSize: 15000000, // 15MB
+            },
+          },
+        },
+      };
+    }
 
     return config;
   },
