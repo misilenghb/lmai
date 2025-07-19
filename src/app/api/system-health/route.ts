@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { supabase } from '@/lib/supabase';
 import { fixDesignWorksRLS, temporarilyDisableRLS, enableRLS } from '@/lib/database-fix';
 
 // 静态导出配置
@@ -8,25 +7,8 @@ export const dynamic = 'force-static';
 export const revalidate = false;
 
 export async function GET(request: NextRequest) {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          const cookie = cookieStore.get(name);
-          return cookie?.value;
-        },
-        async set(name: string, value: string, options: CookieOptions) {
-          await cookieStore.set({ name, value, ...options });
-        },
-        async remove(name: string, options: CookieOptions) {
-          await cookieStore.set({ name, value: '', ...options });
-        },
-      },
-    }
-  );
+  // 使用简单的 supabase 客户端，不依赖 cookies
+  // 静态导出时不需要用户认证
 
   // 验证管理员权限（在开发环境中跳过验证）
   const isDevelopment = process.env.NODE_ENV === 'development';
