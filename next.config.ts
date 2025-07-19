@@ -4,8 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
 
-  // 输出配置 - 适用于云平台部署
-  output: 'standalone',
+  // EdgeOne 免费计划配置 - 静态导出
+  output: 'export',
+  distDir: 'out',
+  trailingSlash: true,
 
   // 配置服务器外部包和实验性功能
   serverExternalPackages: ['@genkit-ai/googleai', '@genkit-ai/next', 'sharp'],
@@ -16,6 +18,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   images: {
+    unoptimized: true, // 静态导出需要禁用图片优化
     remotePatterns: [
       {
         protocol: 'https',
