@@ -171,7 +171,7 @@ const DatabaseManagementPage = () => {
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           {tables.map((table) => {
-            const exists = databaseStatus?.results[table] ?? false;
+            const exists = databaseStatus?.results?.[table] ?? false;
             return (
               <div key={table} className="flex items-center gap-2 p-2 border rounded">
                 {exists ? (
@@ -252,7 +252,7 @@ const DatabaseManagementPage = () => {
           检查状态
         </Button>
         
-        {databaseStatus?.missingCount > 0 && (
+        {databaseStatus && databaseStatus.missingCount > 0 && (
           <Button
             onClick={getFixSQL}
             variant="destructive"
@@ -357,7 +357,7 @@ const DatabaseManagementPage = () => {
           ) : (
             <div className="text-center py-8">
               <div className="text-muted-foreground">
-                {databaseStatus?.missingCount > 0 
+                {databaseStatus && databaseStatus.missingCount > 0
                   ? '点击"获取修复方案"按钮获取SQL语句'
                   : '数据库状态正常，无需修复'
                 }

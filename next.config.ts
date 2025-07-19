@@ -2,14 +2,18 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  reactStrictMode: false, // 临时禁用严格模式来避免双重渲染
+  reactStrictMode: true,
+
+  // 输出配置 - 适用于云平台部署
+  output: 'standalone',
+
   // 配置服务器外部包和实验性功能
-  serverExternalPackages: [],
+  serverExternalPackages: ['@genkit-ai/googleai', '@genkit-ai/next', 'sharp'],
   experimental: {
     serverActions: {
-      allowedOrigins: ['localhost:9004', '192.168.1.11:9004'],
       bodySizeLimit: '2mb',
     },
+    optimizePackageImports: ['lucide-react'],
   },
   images: {
     remotePatterns: [
@@ -40,35 +44,27 @@ const nextConfig: NextConfig = {
     ],
     domains: ['pollinations.ai', 'image.pollinations.ai', 'firebasestorage.googleapis.com', 'placehold.co'],
   },
-  allowedDevOrigins: ['http://localhost:9004', 'http://192.168.1.11:9004'],
-  // 使用新的 turbopack 配置替代已弃用的 experimental.turbo
-  turbopack: {
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
-    },
+  // 环境变量配置
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
-  // 简化的开发模式配置
-  ...(process.env.NODE_ENV === 'development' && {
-    webpack: (config: any) => {
-      // 基本的 webpack 配置
-      config.watchOptions = {
-        poll: 1000,
-        aggregateTimeout: 300,
-        ignored: /node_modules/,
-      };
+  // Webpack 配置优化
+  webpack: (config: any, { isServer }: { isServer: boolean }) => {
+    // 外部化某些包以减少构建大小
+    if (isServer) {
+      config.externals = [...(config.externals || []), 'canvas', 'jsdom', 'sharp'];
+    }
 
-      // 禁用代码分割以避免 ChunkLoadError
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: false,
-      };
+    // 解决模块解析问题
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    };
 
-      return config;
-    },
-  }),
+    return config;
+  },
 };
 
 export default nextConfig;
