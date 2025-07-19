@@ -1,7 +1,7 @@
 /**
  * 客户端 API 服务
  * 用于静态部署时替代服务器端 API 路由
- * 适配 EdgeOne 免费计划
+ * 适配 Cloudflare Pages 静态部署
  */
 
 import { supabase } from '@/lib/supabase';

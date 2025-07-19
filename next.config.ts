@@ -4,9 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
 
-  // Vercel 部署配置 - 支持服务器端功能
-  // output: 'export', // Vercel 不需要静态导出
-  // distDir: 'out',   // Vercel 使用默认 .next 目录
+  // Cloudflare Pages 部署配置
+  output: 'export',
+  distDir: 'out',
+  trailingSlash: true,
 
   // 配置服务器外部包和实验性功能
   serverExternalPackages: ['@genkit-ai/googleai', '@genkit-ai/next', 'sharp'],
@@ -17,7 +18,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   images: {
-    // Vercel 支持图片优化，不需要 unoptimized
+    unoptimized: true, // Cloudflare Pages 静态导出需要
     remotePatterns: [
       {
         protocol: 'https',
