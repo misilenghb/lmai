@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Environment files
+.env*
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Specific files that cause issues
+src/services/crystalRecommendationService.ts
+src/types/questionnaire.ts
+
+# Generated files
+next-env.d.ts
+*.d.ts

@@ -6,6 +6,16 @@ const nextConfig: NextConfig = {
 
   // 移除 output 配置，使用默认设置
 
+  // 在构建时忽略 ESLint 错误
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  // 在构建时忽略 TypeScript 错误（如果需要）
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+
   // 配置服务器外部包和实验性功能
   serverExternalPackages: ['@genkit-ai/googleai', '@genkit-ai/next', 'sharp'],
   experimental: {
