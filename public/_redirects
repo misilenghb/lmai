@@ -3,5 +3,13 @@
 # 管理员重定向
 /admin /admin/dashboard 302
 
-# SPA 路由支持
-/* /index.html 200
+# API 路由保持原样
+/api/* /api/:splat 200
+
+# 静态资源保持原样
+/_next/* /_next/:splat 200
+
+# 其他路由重定向到首页（避免无限循环）
+/dashboard /dashboard/index.html 200
+/login /login/index.html 200
+/register /register/index.html 200
