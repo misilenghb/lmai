@@ -63,8 +63,9 @@ const DatabaseManagementPage = () => {
   const checkDatabaseStatus = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/admin/database-status');
-      const data = await response.json();
+      // 使用客户端服务替代 API 路由
+      const { ClientApiService } = await import('@/services/clientApiService');
+      const data = await ClientApiService.checkTables();
       setDatabaseStatus(data);
       
       if (data.missingCount > 0) {
@@ -93,8 +94,10 @@ const DatabaseManagementPage = () => {
 
   const getFixSQL = async () => {
     try {
-      const response = await fetch('/api/get-missing-tables-sql');
-      const data = await response.json();
+      // 使用客户端服务替代 API 路由
+      const { ClientApiService } = await import('@/services/clientApiService');
+      const missingTables = databaseStatus?.missingTables || [];
+      const data = ClientApiService.getMissingTablesSQL(missingTables);
       setFixResult(data);
       setActiveTab('fix');
     } catch (error) {

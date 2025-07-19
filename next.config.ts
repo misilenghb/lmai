@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
 
-  // EdgeOne 部署配置 - 混合模式
-  // output: 'export', // 注释掉以支持 API 路由
+  // EdgeOne 部署配置 - 静态导出模式（免费计划）
+  output: 'export',
   distDir: 'out',
   trailingSlash: true,
 
