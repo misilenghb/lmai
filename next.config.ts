@@ -46,7 +46,9 @@ const nextConfig: NextConfig = {
   },
   // 环境变量配置
   env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key',
+    POLLINATIONS_API_TOKEN: process.env.POLLINATIONS_API_TOKEN,
   },
   // Webpack 配置优化
   webpack: (config: any, { isServer }: { isServer: boolean }) => {
