@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withAdminAuth } from '@/middleware/admin-middleware';
 import { verifyAdminAccess, getAdminStats } from '@/lib/admin-auth';
 
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 async function handleAdminRequest(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
