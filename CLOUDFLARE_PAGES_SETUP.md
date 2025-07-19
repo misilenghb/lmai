@@ -5,8 +5,16 @@
 在 Cloudflare Pages 控制台中设置以下配置：
 
 ### 构建设置
+
+**选项 1: 使用 Next.js 构建 (推荐)**
 - **Framework preset**: Next.js (Static HTML Export)
 - **Build command**: `npm run build:cloudflare`
+- **Build output directory**: `out`
+- **Root directory**: `/` (项目根目录)
+
+**选项 2: 使用 wrangler 部署**
+- **Framework preset**: None
+- **Build command**: `npm run deploy:cloudflare`
 - **Build output directory**: `out`
 - **Root directory**: `/` (项目根目录)
 

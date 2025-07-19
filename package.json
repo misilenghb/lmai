@@ -10,7 +10,7 @@
     "build": "next build",
     "build:vercel": "next build",
     "build:cloudflare": "next build",
-    "deploy:cloudflare": "next build && npx wrangler deploy",
+    "deploy:cloudflare": "next build && npx wrangler deploy --env=\"\"",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"

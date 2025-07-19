@@ -5,7 +5,7 @@ compatibility_date = "2025-07-19"
 # 指向 Next.js 静态导出的输出目录
 assets = { directory = "./out" }
 
-# 环境变量
-[env.production.vars]
+# 环境变量（顶级配置，避免多环境警告）
+[vars]
 NODE_ENV = "production"
 NEXT_TELEMETRY_DISABLED = "1"
