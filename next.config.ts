@@ -4,8 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
 
-  // 输出配置 - 适用于云平台部署
-  output: 'standalone',
+  // 移除 output 配置，使用默认设置
 
   // 配置服务器外部包和实验性功能
   serverExternalPackages: ['@genkit-ai/googleai', '@genkit-ai/next', 'sharp'],
