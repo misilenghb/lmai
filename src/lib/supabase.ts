@@ -4,26 +4,11 @@ import type { UserProfileDataOutput } from '@/ai/schemas/user-profile-schemas';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// 在构建时使用默认值，避免构建失败
-const defaultUrl = 'https://placeholder.supabase.co';
-const defaultKey = 'placeholder-key';
-
-// 只在运行时检查环境变量
-function checkSupabaseConfig() {
-  if (typeof window !== 'undefined' && (!supabaseUrl || !supabaseAnonKey)) {
-    console.error('Supabase 环境变量未配置，请检查 .env.local 文件中的 NEXT_PUBLIC_SUPABASE_URL 和 NEXT_PUBLIC_SUPABASE_ANON_KEY');
-  }
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase 环境变量未配置，请检查 .env.local 文件中的 NEXT_PUBLIC_SUPABASE_URL 和 NEXT_PUBLIC_SUPABASE_ANON_KEY');
 }
 
-export const supabase = createBrowserClient(
-  supabaseUrl || defaultUrl,
-  supabaseAnonKey || defaultKey
-);
-
-// 在客户端检查配置
-if (typeof window !== 'undefined') {
-  checkSupabaseConfig();
-}
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
 
 // 数据类型定义
 export interface UserProfile {

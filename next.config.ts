@@ -4,24 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
 
-  // EdgeOne 部署配置 - 静态导出模式（免费计划）
-  output: 'export',
-  distDir: 'out',
-  trailingSlash: true,
-
-  // 优化构建以避免大文件
-  swcMinify: true,
-  compress: true,
-
-  // 在构建时忽略 ESLint 错误
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
-  // 在构建时忽略 TypeScript 错误（如果需要）
-  typescript: {
-    ignoreBuildErrors: false,
-  },
+  // 输出配置 - 适用于云平台部署
+  output: 'standalone',
 
   // 配置服务器外部包和实验性功能
   serverExternalPackages: ['@genkit-ai/googleai', '@genkit-ai/next', 'sharp'],
@@ -32,7 +16,6 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -63,12 +46,10 @@ const nextConfig: NextConfig = {
   },
   // 环境变量配置
   env: {
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key',
-    POLLINATIONS_API_TOKEN: process.env.POLLINATIONS_API_TOKEN,
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
-  // Webpack 配置优化 - 减少文件大小
-  webpack: (config: any, { isServer, dev }: { isServer: boolean; dev: boolean }) => {
+  // Webpack 配置优化
+  webpack: (config: any, { isServer }: { isServer: boolean }) => {
     // 外部化某些包以减少构建大小
     if (isServer) {
       config.externals = [...(config.externals || []), 'canvas', 'jsdom', 'sharp'];
@@ -81,29 +62,6 @@ const nextConfig: NextConfig = {
       net: false,
       tls: false,
     };
-
-    // 生产环境优化 - 减少缓存文件大小
-    if (!dev) {
-      // 禁用持久化缓存以避免大文件
-      config.cache = false;
-
-      // 优化分包策略
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          chunks: 'all',
-          maxSize: 20000000, // 20MB
-          cacheGroups: {
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-              maxSize: 15000000, // 15MB
-            },
-          },
-        },
-      };
-    }
 
     return config;
   },

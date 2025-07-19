@@ -200,7 +200,7 @@ export async function logAdminAction(
       adminEmail,
       action,
       details: details || {},
-      ip: request?.headers.get('x-forwarded-for') || request?.headers.get('x-real-ip') || 'unknown',
+      ip: request?.ip || request?.headers.get('x-forwarded-for') || 'unknown',
       userAgent: request?.headers.get('user-agent') || 'unknown'
     };
 
