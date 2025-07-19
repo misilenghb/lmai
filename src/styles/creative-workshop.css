@@ -1,0 +1,317 @@
+/* 创意工坊页面专用样式 */
+
+/* 滚动条隐藏 */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 确保下拉框能够正确显示和交互 */
+[data-radix-select-content] {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+
+[data-radix-select-item] {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+[data-radix-select-item]:hover {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}
+
+/* 奢侈品输入框样式 */
+.luxury-input {
+  @apply border-2 border-border/50 bg-background/80 backdrop-blur-sm;
+  @apply focus:border-primary/50 focus:ring-2 focus:ring-primary/20;
+  @apply transition-all duration-300;
+  @apply placeholder:text-muted-foreground/60;
+}
+
+.luxury-input:focus {
+  box-shadow: 0 0 20px rgba(var(--primary), 0.1);
+}
+
+/* 奢侈品按钮悬停效果 */
+.luxury-button-hover {
+  @apply transition-all duration-300;
+  @apply hover:scale-105 hover:shadow-lg;
+  @apply active:scale-95;
+}
+
+.luxury-button-hover:hover {
+  box-shadow: 0 8px 25px rgba(var(--primary), 0.15);
+}
+
+/* 奢侈品卡片样式 */
+.luxury-card {
+  @apply bg-background/95 backdrop-blur-sm border border-border/50;
+  @apply shadow-lg hover:shadow-xl transition-all duration-300;
+  @apply rounded-xl;
+}
+
+.luxury-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* 奢侈品按钮样式 */
+.luxury-button {
+  @apply bg-gradient-to-r from-primary to-primary/80;
+  @apply hover:from-primary/90 hover:to-primary/70;
+  @apply text-primary-foreground font-medium;
+  @apply shadow-lg hover:shadow-xl;
+  @apply transition-all duration-300;
+  @apply border-0;
+}
+
+.luxury-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px rgba(var(--primary), 0.3);
+}
+
+/* 奢侈品文字渐变 */
+.luxury-text-gradient {
+  background: linear-gradient(135deg, 
+    hsl(var(--primary)) 0%, 
+    hsl(var(--accent)) 50%, 
+    hsl(var(--primary)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* 奢侈品光效 */
+.luxury-glow {
+  filter: drop-shadow(0 0 8px rgba(var(--primary), 0.4));
+  animation: luxury-pulse 2s ease-in-out infinite;
+}
+
+@keyframes luxury-pulse {
+  0%, 100% { 
+    filter: drop-shadow(0 0 8px rgba(var(--primary), 0.4));
+    transform: scale(1);
+  }
+  50% { 
+    filter: drop-shadow(0 0 16px rgba(var(--primary), 0.6));
+    transform: scale(1.02);
+  }
+}
+
+/* 钻石闪烁效果 */
+.diamond-sparkle {
+  position: relative;
+  overflow: hidden;
+}
+
+.diamond-sparkle::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, 
+    transparent 30%, 
+    rgba(255, 255, 255, 0.3) 50%, 
+    transparent 70%);
+  animation: diamond-shine 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes diamond-shine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  50% { transform: translateX(0%) translateY(0%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* 浮动动画 */
+.floating {
+  animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* 脉冲光环效果 */
+.pulse-ring {
+  position: relative;
+}
+
+.pulse-ring::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid rgba(var(--primary), 0.3);
+  border-radius: inherit;
+  animation: pulse-ring 2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* 渐变边框效果 */
+.gradient-border {
+  position: relative;
+  background: linear-gradient(135deg, 
+    hsl(var(--background)) 0%, 
+    hsl(var(--background)) 100%);
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(135deg, 
+    hsl(var(--primary)) 0%, 
+    hsl(var(--accent)) 50%, 
+    hsl(var(--primary)) 100%);
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask-composite: xor;
+}
+
+/* 玻璃态效果 */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .luxury-card {
+    @apply rounded-lg;
+  }
+  
+  .luxury-button-hover:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .luxury-glow {
+    animation: none;
+    filter: none;
+  }
+}
+
+/* 深色模式优化 */
+@media (prefers-color-scheme: dark) {
+  .luxury-card {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  .luxury-card:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .luxury-text-gradient {
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: hsl(var(--foreground));
+  }
+  
+  .luxury-glow {
+    filter: none;
+    animation: none;
+  }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+  .luxury-button-hover,
+  .luxury-glow,
+  .diamond-sparkle::before,
+  .floating,
+  .pulse-ring::after {
+    animation: none;
+    transition: none;
+  }
+
+  .luxury-button-hover:hover {
+    transform: none;
+  }
+}
+
+/* AURA参数面板特殊样式 */
+.aura-panel-gradient {
+  background: linear-gradient(135deg,
+    hsl(var(--aura-pink) / 0.1) 0%,
+    hsl(var(--aura-purple) / 0.1) 50%,
+    hsl(var(--aura-blue) / 0.1) 100%);
+}
+
+.aura-section-header {
+  background: linear-gradient(90deg,
+    hsl(var(--aura-pink) / 0.2) 0%,
+    hsl(var(--aura-purple) / 0.2) 100%);
+  border: 1px solid hsl(var(--aura-pink) / 0.3);
+}
+
+.aura-parameter-item {
+  @apply transition-all duration-200;
+  border-left: 2px solid transparent;
+}
+
+.aura-parameter-item:hover {
+  border-left-color: hsl(var(--aura-pink));
+  background: hsl(var(--aura-pink) / 0.05);
+}
+
+.aura-select {
+  @apply bg-background border border-border rounded-md;
+  @apply focus:outline-none focus:ring-2 focus:border-transparent;
+  @apply transition-all duration-200;
+}
+
+.aura-select:focus {
+  ring-color: hsl(var(--aura-pink) / 0.5);
+  border-color: hsl(var(--aura-pink) / 0.5);
+  box-shadow: 0 0 0 3px hsl(var(--aura-pink) / 0.1);
+}
+
+.aura-crystal-card {
+  @apply bg-muted/20 border border-border/50 rounded-lg;
+  @apply transition-all duration-300;
+  background: linear-gradient(135deg,
+    hsl(var(--background)) 0%,
+    hsl(var(--aura-purple) / 0.05) 100%);
+}
+
+.aura-crystal-card:hover {
+  border-color: hsl(var(--aura-purple) / 0.3);
+  box-shadow: 0 4px 12px hsl(var(--aura-purple) / 0.1);
+}

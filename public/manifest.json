@@ -1,0 +1,97 @@
+{
+  "name": "水晶疗愈系统 - 科学疗愈体验",
+  "short_name": "水晶疗愈",
+  "description": "基于科学原理的个性化水晶疗愈应用",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4A90E2",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "zh-CN",
+  "categories": ["lifestyle", "health", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-512x512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "水晶日历桌面版截图"
+    },
+    {
+      "src": "/screenshot-narrow.png", 
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "水晶日历移动版截图"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "水晶疗愈",
+      "short_name": "疗愈",
+      "description": "开始您的个性化水晶疗愈体验",
+      "url": "/crystal-healing",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "能量分析",
+      "short_name": "能量",
+      "description": "查看能量趋势和分析",
+      "url": "/energy-exploration",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "情绪追踪",
+      "short_name": "追踪",
+      "description": "记录和分析情绪变化趋势",
+      "url": "/crystal-healing?tab=track",
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+crystalcalendar",
+      "url": "/?action=%s"
+    }
+  ]
+}
