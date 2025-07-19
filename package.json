@@ -9,6 +9,7 @@
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "next build",
     "build:production": "NODE_ENV=production next build",
+    "build:edgeone": "next build && next export",
     "build:with-post": "next build && node scripts/post-build.cjs",
     "start": "next start",
     "start:production": "NODE_ENV=production next start",

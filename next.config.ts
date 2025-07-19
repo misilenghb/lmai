@@ -4,8 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
 
-  // 强制使用标准输出目录
-  distDir: '.next',
+  // EdgeOne 部署配置 - 混合模式
+  // output: 'export', // 注释掉以支持 API 路由
+  distDir: 'out',
+  trailingSlash: true,
 
   // 在构建时忽略 ESLint 错误
   eslint: {
@@ -26,6 +28,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
