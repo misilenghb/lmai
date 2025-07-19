@@ -9,17 +9,7 @@ const nextConfig: NextConfig = {
   distDir: 'out',
   trailingSlash: true,
 
-  // 静态导出时跳过 API 路由
-  exportPathMap: async function (defaultPathMap) {
-    // 移除所有 API 路由
-    const pathMap = { ...defaultPathMap };
-    Object.keys(pathMap).forEach(path => {
-      if (path.startsWith('/api/')) {
-        delete pathMap[path];
-      }
-    });
-    return pathMap;
-  },
+  // App Router 自动跳过 API 路由，不需要 exportPathMap
 
   // 配置服务器外部包和实验性功能
   serverExternalPackages: ['@genkit-ai/googleai', '@genkit-ai/next', 'sharp'],
