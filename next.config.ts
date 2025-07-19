@@ -4,7 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
 
-  // 移除 output 配置，使用默认设置
+  // 强制使用标准输出目录
+  distDir: '.next',
 
   // 在构建时忽略 ESLint 错误
   eslint: {
