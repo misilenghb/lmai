@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import DatabaseMigration from '@/lib/database-migrations';
 import DatabaseRelationshipManager from '@/lib/database-relationships';
 import { supabase } from '@/lib/supabase';
-import { fixProfilesRLS, ensureEnhancedAssessmentColumn } from '@/lib/database-fix';
 
 // 静态导出配置
 export const dynamic = 'force-static';
@@ -91,15 +90,15 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     console.log('🚀 开始数据库修复...');
-    
+
     // 1. 修复 profiles 表的 RLS 策略
     const rlsFixed = await fixProfilesRLS();
     console.log('RLS策略修复结果:', rlsFixed ? '成功' : '失败');
-    
+
     // 2. 确保 enhanced_assessment 列存在
     const columnFixed = await ensureEnhancedAssessmentColumn();
     console.log('字段检查结果:', columnFixed ? '成功' : '失败');
-    
+
     return NextResponse.json({
       success: true,
       results: {
@@ -113,6 +112,59 @@ export async function PATCH(request: NextRequest) {
       success: false,
       error: error instanceof Error ? error.message : '未知错误'
     }, { status: 500 });
+  }
+}
+
+// 修复 profiles 表的 RLS 策略
+async function fixProfilesRLS(): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc('exec_sql', {
+      sql_query: `
+        -- 禁用 RLS 策略（如果存在问题）
+        ALTER TABLE profiles DISABLE ROW LEVEL SECURITY;
+
+        -- 或者创建允许所有操作的策略
+        DROP POLICY IF EXISTS "Allow all operations" ON profiles;
+        CREATE POLICY "Allow all operations" ON profiles FOR ALL USING (true);
+
+        -- 重新启用 RLS
+        ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+      `
+    });
+
+    return !error;
+  } catch (error) {
+    console.error('修复 RLS 策略失败:', error);
+    return false;
+  }
+}
+
+// 确保 enhanced_assessment 列存在
+async function ensureEnhancedAssessmentColumn(): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc('exec_sql', {
+      sql_query: `
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS enhanced_assessment JSONB;
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255);
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS password_salt VARCHAR(255);
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS password_reset_token VARCHAR(255);
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS password_reset_expires TIMESTAMP WITH TIME ZONE;
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_login TIMESTAMP WITH TIME ZONE;
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS login_attempts INTEGER DEFAULT 0;
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS account_locked_until TIMESTAMP WITH TIME ZONE;
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_question_1 VARCHAR(500);
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_answer_1 VARCHAR(255);
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_question_2 VARCHAR(500);
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_answer_2 VARCHAR(255);
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_question_3 VARCHAR(500);
+        ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_answer_3 VARCHAR(255);
+      `
+    });
+
+    return !error;
+  } catch (error) {
+    console.error('添加字段失败:', error);
+    return false;
   }
 }
 
