@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
-// 静态导出配置
-export const dynamic = 'force-static';
-export const revalidate = false;
+// 动态路由配置 - 数据库状态检查需要运行时执行
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   try {

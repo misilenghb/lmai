@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseSetupExecutor } from '@/lib/execute-database-setup';
 
-// 静态导出配置
-export const dynamic = 'force-static';
-export const revalidate = false;
+// 动态路由配置 - 数据库设置需要运行时执行
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
   try {

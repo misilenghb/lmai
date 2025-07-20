@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AutoDiagnosticSystem } from '@/lib/supabase';
 
+// 动态路由配置 - 自动修复需要运行时执行
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 /**
  * 自动诊断和修复 API
  * POST /api/auto-repair
