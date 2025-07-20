@@ -28,6 +28,13 @@ export interface UserProfile {
   energy_preferences?: any;
   personality_insights?: any;
   enhanced_assessment?: any;
+  password_hash?: string;
+  password_salt?: string;
+  password_reset_token?: string;
+  password_reset_expires?: string;
+  last_login?: string;
+  login_attempts?: number;
+  account_locked_until?: string;
   created_at: string;
   updated_at?: string;
 }
@@ -229,12 +236,123 @@ export const profileService = {
       .select('*')
       .eq('email', email)
       .order('created_at', { ascending: false });
-    
+
     if (error || !data) {
       console.error('Error fetching user profiles:', error);
       return [];
     }
     return data;
+  },
+
+  // 验证用户密码
+  async verifyPassword(email: string, password: string): Promise<{
+    success: boolean;
+    user?: UserProfile;
+    error?: string;
+  }> {
+    try {
+      console.log('🔐 验证用户密码:', email);
+
+      // 调用数据库函数验证密码
+      const { data, error } = await supabase.rpc('verify_password', {
+        input_email: email,
+        input_password: password
+      });
+
+      if (error) {
+        console.error('❌ 密码验证失败:', error);
+        return {
+          success: false,
+          error: error.message || '验证失败'
+        };
+      }
+
+      if (!data || data.length === 0) {
+        return {
+          success: false,
+          error: '用户不存在'
+        };
+      }
+
+      const result = data[0];
+      if (!result.is_valid) {
+        return {
+          success: false,
+          error: result.error_message || '密码错误'
+        };
+      }
+
+      // 获取完整的用户档案
+      const userProfile = await this.getUserProfileByEmail(email);
+
+      return {
+        success: true,
+        user: userProfile
+      };
+
+    } catch (error) {
+      console.error('❌ 密码验证异常:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '验证异常'
+      };
+    }
+  },
+
+  // 注册新用户
+  async registerUser(email: string, password: string, name?: string): Promise<{
+    success: boolean;
+    user?: UserProfile;
+    error?: string;
+  }> {
+    try {
+      console.log('📝 注册新用户:', email);
+
+      // 调用数据库函数注册用户
+      const { data, error } = await supabase.rpc('register_user', {
+        input_email: email,
+        input_password: password,
+        input_name: name
+      });
+
+      if (error) {
+        console.error('❌ 用户注册失败:', error);
+        return {
+          success: false,
+          error: error.message || '注册失败'
+        };
+      }
+
+      if (!data || data.length === 0) {
+        return {
+          success: false,
+          error: '注册失败'
+        };
+      }
+
+      const result = data[0];
+      if (!result.success) {
+        return {
+          success: false,
+          error: result.error_message || '注册失败'
+        };
+      }
+
+      // 获取新创建的用户档案
+      const userProfile = await this.getUserProfileByEmail(email);
+
+      return {
+        success: true,
+        user: userProfile
+      };
+
+    } catch (error) {
+      console.error('❌ 用户注册异常:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '注册异常'
+      };
+    }
   }
 };
 
