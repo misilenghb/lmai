@@ -1062,7 +1062,7 @@ const ImprovedPersonalizedSuggestions: React.FC<ImprovedPersonalizedSuggestionsP
                 </div>
 
                 {/* 今日能量预测 */}
-                <div className="p-4 bg-gradient-to-r from-secondary/5 to-accent/5 rounded-lg border border-secondary/20">
+                <div>
                   <h4 className="font-medium text-secondary mb-4 flex items-center gap-2">
                     <LuxuryIcons.Calendar
                       size={16}
@@ -1083,7 +1083,7 @@ const ImprovedPersonalizedSuggestions: React.FC<ImprovedPersonalizedSuggestionsP
 
                   {/* 能量时间轴 */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div className="p-3 bg-gradient-to-r from-success/5 to-success/10 rounded-lg border border-success/20">
+                    <div>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <Sun className="h-4 w-4 text-success" />
@@ -1104,7 +1104,7 @@ const ImprovedPersonalizedSuggestions: React.FC<ImprovedPersonalizedSuggestionsP
                       </div>
                     </div>
 
-                    <div className="p-3 bg-gradient-to-r from-warning/5 to-warning/10 rounded-lg border border-warning/20">
+                    <div>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <Moon className="h-4 w-4 text-warning" />
@@ -1209,11 +1209,11 @@ const ImprovedPersonalizedSuggestions: React.FC<ImprovedPersonalizedSuggestionsP
                 </div>
 
                 {/* 智能优化建议 - 合并循证实践建议 */}
-                <div className="p-4 bg-gradient-to-r from-accent/5 to-secondary/5 rounded-lg border border-accent/20">
+                <div>
                   {/* 基础能量建议 */}
                   <div className="space-y-2 mb-4">
                     {(energyModel.recommendations || []).map((rec, index) => (
-                      <div key={index} className="text-sm text-accent flex items-center gap-2 p-2 bg-accent/5 rounded">
+                      <div key={index} className="text-sm text-accent flex items-center gap-2">
                         <LuxuryIcons.Success
                           size={12}
                           className={generateLuxuryIconClasses({
@@ -1239,7 +1239,7 @@ const ImprovedPersonalizedSuggestions: React.FC<ImprovedPersonalizedSuggestionsP
                       {language === 'zh' ? '循证实践建议' : 'Evidence-Based Practices'}
                     </h5>
                     {(scientificSuggestions || []).slice(0, 2).map((suggestion, index) => (
-                      <div key={suggestion.id} className="p-3 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg border border-primary/20">
+                      <div key={suggestion.id}>
                         <div className="flex items-start gap-2">
                           <div className="text-lg">{suggestion.icon}</div>
                           <div className="flex-1">
