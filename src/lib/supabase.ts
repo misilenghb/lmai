@@ -35,6 +35,12 @@ export interface UserProfile {
   last_login?: string;
   login_attempts?: number;
   account_locked_until?: string;
+  security_question_1?: string;
+  security_answer_1?: string;
+  security_question_2?: string;
+  security_answer_2?: string;
+  security_question_3?: string;
+  security_answer_3?: string;
   created_at: string;
   updated_at?: string;
 }
@@ -351,6 +357,220 @@ export const profileService = {
       return {
         success: false,
         error: error instanceof Error ? error.message : '注册异常'
+      };
+    }
+  },
+
+  // 获取用户安全问题
+  async getSecurityQuestions(email: string): Promise<{
+    success: boolean;
+    questions?: {
+      question1?: string;
+      question2?: string;
+      question3?: string;
+    };
+    error?: string;
+  }> {
+    try {
+      console.log('🔍 获取安全问题:', email);
+
+      const { data, error } = await supabase.rpc('get_security_questions', {
+        input_email: email
+      });
+
+      if (error) {
+        console.error('❌ 获取安全问题失败:', error);
+        return {
+          success: false,
+          error: error.message || '获取安全问题失败'
+        };
+      }
+
+      if (!data || data.length === 0) {
+        return {
+          success: false,
+          error: '用户不存在'
+        };
+      }
+
+      const result = data[0];
+      if (!result.success) {
+        return {
+          success: false,
+          error: result.error_message || '获取安全问题失败'
+        };
+      }
+
+      return {
+        success: true,
+        questions: {
+          question1: result.question1,
+          question2: result.question2,
+          question3: result.question3
+        }
+      };
+
+    } catch (error) {
+      console.error('❌ 获取安全问题异常:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '获取安全问题异常'
+      };
+    }
+  },
+
+  // 验证安全问题答案
+  async verifySecurityQuestions(email: string, answers: {
+    answer1: string;
+    answer2: string;
+    answer3: string;
+  }): Promise<{
+    success: boolean;
+    resetToken?: string;
+    error?: string;
+  }> {
+    try {
+      console.log('🔐 验证安全问题:', email);
+
+      const { data, error } = await supabase.rpc('verify_security_questions', {
+        input_email: email,
+        answer1: answers.answer1,
+        answer2: answers.answer2,
+        answer3: answers.answer3
+      });
+
+      if (error) {
+        console.error('❌ 验证安全问题失败:', error);
+        return {
+          success: false,
+          error: error.message || '验证失败'
+        };
+      }
+
+      if (!data || data.length === 0) {
+        return {
+          success: false,
+          error: '验证失败'
+        };
+      }
+
+      const result = data[0];
+      if (!result.success) {
+        return {
+          success: false,
+          error: result.error_message || '安全问题答案错误'
+        };
+      }
+
+      return {
+        success: true,
+        resetToken: result.reset_token
+      };
+
+    } catch (error) {
+      console.error('❌ 验证安全问题异常:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '验证异常'
+      };
+    }
+  },
+
+  // 请求密码重置（邮箱方式）
+  async requestPasswordReset(email: string): Promise<{
+    success: boolean;
+    resetToken?: string;
+    error?: string;
+  }> {
+    try {
+      console.log('📧 请求密码重置:', email);
+
+      const { data, error } = await supabase.rpc('request_password_reset', {
+        input_email: email
+      });
+
+      if (error) {
+        console.error('❌ 请求密码重置失败:', error);
+        return {
+          success: false,
+          error: error.message || '请求失败'
+        };
+      }
+
+      if (!data || data.length === 0) {
+        return {
+          success: false,
+          error: '请求失败'
+        };
+      }
+
+      const result = data[0];
+      if (!result.success) {
+        return {
+          success: false,
+          error: result.error_message || '请求失败'
+        };
+      }
+
+      return {
+        success: true,
+        resetToken: result.reset_token
+      };
+
+    } catch (error) {
+      console.error('❌ 请求密码重置异常:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '请求异常'
+      };
+    }
+  },
+
+  // 使用重置令牌重置密码
+  async resetPasswordWithToken(resetToken: string, newPassword: string): Promise<{
+    success: boolean;
+    error?: string;
+  }> {
+    try {
+      console.log('🔄 重置密码');
+
+      const { data, error } = await supabase.rpc('reset_password_with_token', {
+        reset_token: resetToken,
+        new_password: newPassword
+      });
+
+      if (error) {
+        console.error('❌ 重置密码失败:', error);
+        return {
+          success: false,
+          error: error.message || '重置失败'
+        };
+      }
+
+      if (!data || data.length === 0) {
+        return {
+          success: false,
+          error: '重置失败'
+        };
+      }
+
+      const result = data[0];
+      if (!result.success) {
+        return {
+          success: false,
+          error: result.error_message || '重置失败'
+        };
+      }
+
+      return {
+        success: true
+      };
+
+    } catch (error) {
+      console.error('❌ 重置密码异常:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '重置异常'
       };
     }
   }

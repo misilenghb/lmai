@@ -10,6 +10,14 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_login TIMESTAMP WITH TIME ZON
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS login_attempts INTEGER DEFAULT 0;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS account_locked_until TIMESTAMP WITH TIME ZONE;
 
+-- 1.1 添加安全问题字段
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_question_1 VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_answer_1 VARCHAR(255);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_question_2 VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_answer_2 VARCHAR(255);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_question_3 VARCHAR(500);
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS security_answer_3 VARCHAR(255);
+
 -- 2. 创建密码相关索引
 CREATE INDEX IF NOT EXISTS idx_profiles_password_reset_token ON profiles(password_reset_token);
 CREATE INDEX IF NOT EXISTS idx_profiles_last_login ON profiles(last_login);
@@ -132,14 +140,44 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 6. 插入测试用户数据
-INSERT INTO profiles (email, name, password_hash, created_at, updated_at)
-VALUES 
-  ('admin@lmai.cc', '管理员', 'admin123', NOW(), NOW()),
-  ('user@lmai.cc', '用户', 'user123', NOW(), NOW()),
-  ('test@lmai.cc', '测试用户', 'test123', NOW(), NOW())
+-- 6. 插入测试用户数据（包含安全问题）
+INSERT INTO profiles (
+  email, name, password_hash,
+  security_question_1, security_answer_1,
+  security_question_2, security_answer_2,
+  security_question_3, security_answer_3,
+  created_at, updated_at
+)
+VALUES
+  (
+    'admin@lmai.cc', '管理员', 'admin123',
+    '您的第一只宠物叫什么名字？', '小白',
+    '您的出生城市是哪里？', '北京',
+    '您最喜欢的颜色是什么？', '蓝色',
+    NOW(), NOW()
+  ),
+  (
+    'user@lmai.cc', '用户', 'user123',
+    '您的第一只宠物叫什么名字？', '小黑',
+    '您的出生城市是哪里？', '上海',
+    '您最喜欢的颜色是什么？', '红色',
+    NOW(), NOW()
+  ),
+  (
+    'test@lmai.cc', '测试用户', 'test123',
+    '您的第一只宠物叫什么名字？', '小花',
+    '您的出生城市是哪里？', '广州',
+    '您最喜欢的颜色是什么？', '绿色',
+    NOW(), NOW()
+  )
 ON CONFLICT (email) DO UPDATE SET
   password_hash = EXCLUDED.password_hash,
+  security_question_1 = EXCLUDED.security_question_1,
+  security_answer_1 = EXCLUDED.security_answer_1,
+  security_question_2 = EXCLUDED.security_question_2,
+  security_answer_2 = EXCLUDED.security_answer_2,
+  security_question_3 = EXCLUDED.security_question_3,
+  security_answer_3 = EXCLUDED.security_answer_3,
   updated_at = NOW();
 
 -- 7. 创建密码重置功能
@@ -156,22 +194,162 @@ DECLARE
 BEGIN
   -- 查找用户
   SELECT id INTO user_record FROM profiles WHERE email = input_email;
-  
+
   IF NOT FOUND THEN
     RETURN QUERY SELECT FALSE, NULL::TEXT, '用户不存在';
     RETURN;
   END IF;
-  
+
   -- 生成重置令牌
   new_token := encode(gen_random_bytes(32), 'hex');
-  
+
   -- 更新用户记录
-  UPDATE profiles 
+  UPDATE profiles
   SET password_reset_token = new_token,
       password_reset_expires = NOW() + INTERVAL '1 hour'
   WHERE email = input_email;
-  
+
   RETURN QUERY SELECT TRUE, new_token, NULL::TEXT;
+  RETURN;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 8. 创建安全问题验证函数
+CREATE OR REPLACE FUNCTION verify_security_questions(
+  input_email TEXT,
+  answer1 TEXT,
+  answer2 TEXT,
+  answer3 TEXT
+) RETURNS TABLE(
+  success BOOLEAN,
+  reset_token TEXT,
+  error_message TEXT
+) AS $$
+DECLARE
+  user_record RECORD;
+  new_token TEXT;
+  correct_answers INTEGER := 0;
+BEGIN
+  -- 查找用户和安全问题答案
+  SELECT id, security_answer_1, security_answer_2, security_answer_3
+  INTO user_record
+  FROM profiles
+  WHERE email = input_email;
+
+  IF NOT FOUND THEN
+    RETURN QUERY SELECT FALSE, NULL::TEXT, '用户不存在';
+    RETURN;
+  END IF;
+
+  -- 检查安全问题答案（不区分大小写）
+  IF user_record.security_answer_1 IS NOT NULL AND
+     LOWER(TRIM(user_record.security_answer_1)) = LOWER(TRIM(answer1)) THEN
+    correct_answers := correct_answers + 1;
+  END IF;
+
+  IF user_record.security_answer_2 IS NOT NULL AND
+     LOWER(TRIM(user_record.security_answer_2)) = LOWER(TRIM(answer2)) THEN
+    correct_answers := correct_answers + 1;
+  END IF;
+
+  IF user_record.security_answer_3 IS NOT NULL AND
+     LOWER(TRIM(user_record.security_answer_3)) = LOWER(TRIM(answer3)) THEN
+    correct_answers := correct_answers + 1;
+  END IF;
+
+  -- 需要至少答对2个问题
+  IF correct_answers < 2 THEN
+    RETURN QUERY SELECT FALSE, NULL::TEXT, '安全问题答案错误，请重试';
+    RETURN;
+  END IF;
+
+  -- 生成重置令牌
+  new_token := encode(gen_random_bytes(32), 'hex');
+
+  -- 更新用户记录
+  UPDATE profiles
+  SET password_reset_token = new_token,
+      password_reset_expires = NOW() + INTERVAL '1 hour'
+  WHERE email = input_email;
+
+  RETURN QUERY SELECT TRUE, new_token, NULL::TEXT;
+  RETURN;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 9. 创建重置密码函数
+CREATE OR REPLACE FUNCTION reset_password_with_token(
+  reset_token TEXT,
+  new_password TEXT
+) RETURNS TABLE(
+  success BOOLEAN,
+  error_message TEXT
+) AS $$
+DECLARE
+  user_record RECORD;
+BEGIN
+  -- 查找有效的重置令牌
+  SELECT id, email, password_reset_expires
+  INTO user_record
+  FROM profiles
+  WHERE password_reset_token = reset_token
+    AND password_reset_expires > NOW();
+
+  IF NOT FOUND THEN
+    RETURN QUERY SELECT FALSE, '重置令牌无效或已过期';
+    RETURN;
+  END IF;
+
+  -- 验证新密码强度
+  IF length(new_password) < 6 THEN
+    RETURN QUERY SELECT FALSE, '密码至少需要6个字符';
+    RETURN;
+  END IF;
+
+  -- 更新密码并清除重置令牌
+  UPDATE profiles
+  SET password_hash = new_password,
+      password_reset_token = NULL,
+      password_reset_expires = NULL,
+      login_attempts = 0,
+      account_locked_until = NULL,
+      updated_at = NOW()
+  WHERE id = user_record.id;
+
+  RETURN QUERY SELECT TRUE, NULL::TEXT;
+  RETURN;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 10. 获取用户安全问题函数
+CREATE OR REPLACE FUNCTION get_security_questions(
+  input_email TEXT
+) RETURNS TABLE(
+  success BOOLEAN,
+  question1 TEXT,
+  question2 TEXT,
+  question3 TEXT,
+  error_message TEXT
+) AS $$
+DECLARE
+  user_record RECORD;
+BEGIN
+  -- 查找用户
+  SELECT security_question_1, security_question_2, security_question_3
+  INTO user_record
+  FROM profiles
+  WHERE email = input_email;
+
+  IF NOT FOUND THEN
+    RETURN QUERY SELECT FALSE, NULL::TEXT, NULL::TEXT, NULL::TEXT, '用户不存在';
+    RETURN;
+  END IF;
+
+  RETURN QUERY SELECT TRUE,
+    user_record.security_question_1,
+    user_record.security_question_2,
+    user_record.security_question_3,
+    NULL::TEXT;
   RETURN;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

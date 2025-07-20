@@ -89,12 +89,19 @@ export default function LoginForm() {
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t('auth.loginButton')}
             </Button>
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              {t('auth.noAccountPrompt')}{" "}
-              <Link href="/register" className="underline underline-offset-4 hover:text-primary">
-                {t('auth.registerLink')}
-              </Link>
-            </p>
+            <div className="mt-4 text-center text-sm text-muted-foreground space-y-2">
+              <div>
+                <Link href="/forgot-password" className="text-purple-600 hover:underline underline-offset-4">
+                  忘记密码？
+                </Link>
+              </div>
+              <p>
+                {t('auth.noAccountPrompt')}{" "}
+                <Link href="/register" className="underline underline-offset-4 hover:text-primary">
+                  {t('auth.registerLink')}
+                </Link>
+              </p>
+            </div>
           </CardFooter>
         </form>
       </Form>
