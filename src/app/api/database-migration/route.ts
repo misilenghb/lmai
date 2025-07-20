@@ -4,9 +4,9 @@ import DatabaseRelationshipManager from '@/lib/database-relationships';
 import { supabase } from '@/lib/supabase';
 import { fixProfilesRLS, ensureEnhancedAssessmentColumn } from '@/lib/database-fix';
 
-// 动态路由配置 - 允许运行时执行
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
 
 export async function GET() {
   try {

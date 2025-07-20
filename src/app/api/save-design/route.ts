@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
-// 动态路由配置 - 保存设计需要数据库交互
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
 
 export async function POST(request: NextRequest) {
   // 使用简单的 supabase 客户端，不依赖 cookies
