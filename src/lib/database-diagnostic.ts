@@ -145,9 +145,15 @@ export class DatabaseDiagnostic {
       }
       
       // 获取表结构信息
-      const { data: columns, error: columnsError } = await supabase
-        .rpc('get_table_columns', { table_name: tableName })
-        .catch(() => ({ data: null, error: 'Function not available' }));
+      let columns = null;
+      let columnsError = null;
+      try {
+        const result = await supabase.rpc('get_table_columns', { table_name: tableName });
+        columns = result.data;
+        columnsError = result.error;
+      } catch (error) {
+        columnsError = 'Function not available';
+      }
       
       // 获取行数
       const { count, error: countError } = await supabase
