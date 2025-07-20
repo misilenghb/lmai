@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
 
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 /**
  * 生成密码哈希和盐值
  */

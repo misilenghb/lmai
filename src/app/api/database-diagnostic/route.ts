@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseDiagnostic } from '@/lib/database-diagnostic';
 
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 export async function GET(request: NextRequest) {
   try {
     console.log('🔍 开始数据库诊断...');

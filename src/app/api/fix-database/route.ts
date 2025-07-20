@@ -3,6 +3,10 @@ import { supabase } from '@/lib/supabase';
 import fs from 'fs';
 import path from 'path';
 
+// 静态导出配置
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 export async function POST(request: NextRequest) {
   try {
     console.log('🔧 开始执行数据库修复...');
