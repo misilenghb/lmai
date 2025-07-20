@@ -21,7 +21,7 @@ export default function LoginForm() {
 
   const formSchema = z.object({
     email: z.string().email({ message: t('auth.validation.invalidEmail') }),
-    password: z.string().min(1, { message: t('auth.validation.passwordRequired') }),
+    password: z.string().min(6, { message: '密码至少需要6个字符' }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -32,13 +32,20 @@ export default function LoginForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      login(values.email);
+    try {
+      // 调用登录函数，现在需要密码验证
+      const success = await login(values.email, values.password);
+      if (!success) {
+        // 登录失败，错误信息已在 AuthContext 中显示
+        console.log('登录失败');
+      }
+    } catch (error) {
+      console.error('登录过程中发生错误:', error);
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   }
 
   return (

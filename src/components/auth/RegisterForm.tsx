@@ -37,13 +37,20 @@ export default function RegisterForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      register(values.email);
+    try {
+      // 调用注册函数，现在需要密码验证
+      const success = await register(values.email, values.password);
+      if (!success) {
+        // 注册失败，错误信息已在 AuthContext 中显示
+        console.log('注册失败');
+      }
+    } catch (error) {
+      console.error('注册过程中发生错误:', error);
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   }
 
   return (
