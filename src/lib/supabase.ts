@@ -809,56 +809,7 @@ export class AutoDiagnosticSystem {
     return { canConnect, hasAuth };
   }
 
-  /**
-   * 检查 Supabase 连接
-   */
-  private static async checkSupabaseConnection(): Promise<{ canConnect: boolean; hasAuth: boolean }> {
-    this.addResult('数据库', 'Supabase连接', 'info', '测试 Supabase 连接...');
 
-    let canConnect = false;
-    let hasAuth = false;
-
-    try {
-      // 测试认证服务
-      const { data: authData, error: authError } = await supabase.auth.getSession();
-
-      if (authError) {
-        this.addResult('数据库', 'Supabase认证', 'warning', `认证服务警告: ${authError.message}`, authError);
-      } else {
-        hasAuth = true;
-        this.addResult('数据库', 'Supabase认证', 'success', '认证服务正常');
-      }
-
-      // 测试基础查询 - 尝试查询一个简单的表
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id')
-        .limit(1);
-
-      if (error) {
-        if (error.code === '42P01') {
-          this.addResult('数据库', 'Supabase查询', 'warning', '数据库连接正常，但表格不存在', {
-            code: error.code,
-            message: error.message
-          });
-          canConnect = true; // 连接正常，只是表格不存在
-        } else {
-          this.addResult('数据库', 'Supabase查询', 'error', `数据库查询失败: ${error.message}`, {
-            code: error.code,
-            details: error.details
-          });
-        }
-      } else {
-        canConnect = true;
-        this.addResult('数据库', 'Supabase查询', 'success', `数据库查询成功 (${data?.length || 0} 条记录)`);
-      }
-
-    } catch (error) {
-      this.addResult('数据库', 'Supabase连接', 'error', `连接异常: ${error}`, error);
-    }
-
-    return { canConnect, hasAuth };
-  }
 
   /**
    * 检查和修复数据库表格（使用智能修复）
