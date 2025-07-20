@@ -16,7 +16,8 @@ import {
   Layers,
   Brush,
   Globe,
-  Grid3X3
+  Grid3X3,
+  X
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCreativeWorkshop } from '@/contexts/CreativeWorkshopContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import type { DesignStateInput } from '@/types/design';
 import {
   crystalPromptSystem,
@@ -34,6 +36,7 @@ import AdvancedAIService, { AdvancedDesignParams } from '@/services/advancedAISe
 
 interface AdvancedCrystalDesignPanelProps {
   onGenerateSuggestions: (data: any) => void;
+  onClose?: () => void; // 可选的关闭回调函数
 }
 
 // 提取艺术风格描述的辅助函数
@@ -94,9 +97,11 @@ const getRenderingLevelDescription = (level: string) => {
 };
 
 const AdvancedCrystalDesignPanel: React.FC<AdvancedCrystalDesignPanelProps> = ({
-  onGenerateSuggestions
+  onGenerateSuggestions,
+  onClose
 }) => {
   const { designInput, setDesignInput } = useCreativeWorkshop();
+  const isMobile = useIsMobile();
   const [customKeywords, setCustomKeywords] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
@@ -397,10 +402,21 @@ const AdvancedCrystalDesignPanel: React.FC<AdvancedCrystalDesignPanelProps> = ({
           <div className="p-2 rounded-lg bg-gradient-to-br from-aura-pink/20 to-aura-purple/20 border border-aura-pink/30">
             <Sparkles className="w-5 h-5 text-aura-pink" />
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className="text-lg font-semibold luxury-text-gradient">高级水晶设计面板</h2>
             <p className="text-sm text-muted-foreground">专业级AI提示词生成</p>
           </div>
+          {/* 移动端关闭按钮 */}
+          {isMobile && onClose && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="shrink-0 h-8 w-8 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
         </div>
 
 

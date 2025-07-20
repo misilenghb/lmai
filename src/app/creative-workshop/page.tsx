@@ -15,6 +15,7 @@ import StatusIndicator from '@/components/StatusIndicator';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { useCreativeWorkshop } from '@/contexts/CreativeWorkshopContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Wand2, User, RefreshCw, Lightbulb, Images, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -51,10 +52,18 @@ export default function CreativeWorkshopPage() {
     sendInitialGreeting,
   } = useCreativeWorkshop();
   
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const isMobile = useIsMobile();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 默认关闭，稍后根据设备类型设置
   const historyEndRef = useRef<HTMLDivElement>(null);
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
   const { t, language } = useLanguage();
+
+  // 根据设备类型设置侧边栏初始状态
+  useEffect(() => {
+    if (isMobile !== undefined) {
+      setIsSidebarOpen(!isMobile); // 桌面端默认打开，移动端默认关闭
+    }
+  }, [isMobile]);
   const { toast } = useToast();
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -434,29 +443,50 @@ export default function CreativeWorkshopPage() {
         </div>
       </div>
 
-      {/* 右侧参数面板 - 优化动画性能 */}
+      {/* 右侧参数面板 - 移动端和桌面端适配 */}
       <AnimatePresence mode="wait">
         {isSidebarOpen && (
           <motion.div
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: 384 }}
-            exit={{ opacity: 0, width: 0 }}
-            transition={{
-              duration: 0.3, // 缩短动画时间
-              ease: "easeInOut", // 使用标准缓动
-              layout: { duration: 0.3 } // 添加布局动画控制
+            initial={{
+              opacity: 0,
+              width: isMobile ? '100vw' : 0,
+              x: isMobile ? '100%' : 0
             }}
-            className="border-l border-border/50 bg-background/95 backdrop-blur-sm overflow-hidden shadow-2xl will-change-transform"
+            animate={{
+              opacity: 1,
+              width: isMobile ? '100vw' : 384,
+              x: 0
+            }}
+            exit={{
+              opacity: 0,
+              width: isMobile ? '100vw' : 0,
+              x: isMobile ? '100%' : 0
+            }}
+            transition={{
+              duration: 0.3,
+              ease: "easeInOut",
+              layout: { duration: 0.3 }
+            }}
+            className={`
+              ${isMobile
+                ? 'fixed inset-0 z-50 bg-background'
+                : 'border-l border-border/50 bg-background/95 backdrop-blur-sm'
+              }
+              overflow-hidden shadow-2xl will-change-transform
+            `}
             style={{
-              transform: 'translateZ(0)', // 启用硬件加速
-              backfaceVisibility: 'hidden' // 优化渲染
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden'
             }}
           >
-            <div className="w-96 h-full relative">
+            <div className={`${isMobile ? 'w-full' : 'w-96'} h-full relative`}>
               {/* 侧边栏背景装饰 */}
               <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-accent/10 pointer-events-none" />
               <div className="relative z-10 h-full">
-                <AdvancedCrystalDesignPanel onGenerateSuggestions={handleSidebarGenerate} />
+                <AdvancedCrystalDesignPanel
+                  onGenerateSuggestions={handleSidebarGenerate}
+                  onClose={isMobile ? handleToggleSidebar : undefined}
+                />
               </div>
             </div>
           </motion.div>
