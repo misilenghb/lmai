@@ -11,7 +11,7 @@ import QuickPresets from '@/components/QuickPresets';
 import DesignHistory from '@/components/DesignHistory';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 import StatusIndicator from '@/components/StatusIndicator';
-import OptimizationSummary from '@/components/OptimizationSummary';
+
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { useCreativeWorkshop } from '@/contexts/CreativeWorkshopContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -309,17 +309,6 @@ export default function CreativeWorkshopPage() {
         >
           <QuickPresets />
         </motion.div>
-
-        {/* 优化总结 */}
-        <motion.div
-          className="mt-16 w-full max-w-7xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-        >
-          <OptimizationSummary />
-        </motion.div>
-
 
 
         {/* 快速开始按钮 */}
