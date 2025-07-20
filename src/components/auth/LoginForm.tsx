@@ -21,7 +21,7 @@ export default function LoginForm() {
 
   const formSchema = z.object({
     email: z.string().email({ message: t('auth.validation.invalidEmail') }),
-    password: z.string().min(6, { message: '密码至少需要6个字符' }),
+    password: z.string().min(1, { message: t('auth.validation.passwordRequired') }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -32,20 +32,13 @@ export default function LoginForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-    try {
-      // 调用登录函数，现在需要密码验证
-      const success = await login(values.email, values.password);
-      if (!success) {
-        // 登录失败，错误信息已在 AuthContext 中显示
-        console.log('登录失败');
-      }
-    } catch (error) {
-      console.error('登录过程中发生错误:', error);
-    } finally {
+    // Simulate API call
+    setTimeout(() => {
+      login(values.email);
       setIsSubmitting(false);
-    }
+    }, 1000);
   }
 
   return (
@@ -89,19 +82,12 @@ export default function LoginForm() {
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t('auth.loginButton')}
             </Button>
-            <div className="mt-4 text-center text-sm text-muted-foreground space-y-2">
-              <div>
-                <Link href="/forgot-password" className="text-purple-600 hover:underline underline-offset-4">
-                  忘记密码？
-                </Link>
-              </div>
-              <p>
-                {t('auth.noAccountPrompt')}{" "}
-                <Link href="/register" className="underline underline-offset-4 hover:text-primary">
-                  {t('auth.registerLink')}
-                </Link>
-              </p>
-            </div>
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              {t('auth.noAccountPrompt')}{" "}
+              <Link href="/register" className="underline underline-offset-4 hover:text-primary">
+                {t('auth.registerLink')}
+              </Link>
+            </p>
           </CardFooter>
         </form>
       </Form>
